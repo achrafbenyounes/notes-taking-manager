@@ -5,6 +5,12 @@ CUR_DIR = os.path.dirname(__file__)
 DATA_FOLDER = os.path.join(CUR_DIR, 'data')
 path_note = None
 
+def getNoteContent(note_name):
+    note_path = os.path.join(DATA_FOLDER, note_name + '.txt')
+    with open(note_path, 'r') as f:
+        note_content = f.read()
+    return note_content
+
 def createNote(noteName, content = ''):
     path_note = getNotePath(DATA_FOLDER, noteName, '.txt')
     with open(path_note, 'w') as f:
@@ -28,11 +34,3 @@ def retrieveAllNotes():
 def getNotePath(folderNote, noteName, noteExtension):
     return os.path.join(folderNote, noteName + noteExtension)
 
-createNote('firstNote', 'This is an example of first writing note')
-createNote('secondNote', 'This is an example of first writing note')
-createNote('thridNote', 'This is an example of first writing note')
-createNote('fourthNote', 'This is an example of first writing note')
-createNote('fifthNote', 'This is an example of first writing note')
-deleteNote('firstNote')
-notes = retrieveAllNotes()
-print(notes)

@@ -1,5 +1,6 @@
 from PySide2 import QtWidgets, QtGui, QtCore
 from ui.principalWindow import Ui_principalWindow
+import os
 import notesManager as nm
 
 class NoteCreation(QtWidgets.QWidget, Ui_principalWindow):
@@ -16,31 +17,45 @@ class NoteCreation(QtWidgets.QWidget, Ui_principalWindow):
         self.btn_updateNote.clicked.connect(self.updateNote)
         self.lw_listNotes.itemClicked.connect(self.showNote)
 
-
     def createNote(self):
         noteName, ok = QtWidgets.QInputDialog.getText(self, 'Create a note', 'Give your note')
         if not ok:
             return
         nm.createNote(noteName)
         self.retrieveAllNotes()
-    
-    def deleteNote(self):
+
+    # Make a function to retrieve the selected note and to be used by other methods
+    def getSelectedNote(self):
         notes_selected = self.lw_listNotes.selectedItems()
         if not notes_selected:
             return
         note_name = notes_selected[-1].text()
+        path_note = os.path.join(nm.DATA_FOLDER, note_name + '.txt')
+        return note_name, path_note
+    
+    def deleteNote(self):
+        note_name, path_name = self.getSelectedNote()
         nm.deleteNote(note_name)
         self.retrieveAllNotes()
+        self.te_NoteContent.setText('')
+
     def showNote(self):
-        print("Note visualized ...")
+        note_name, path_note = self.getSelectedNote()
+        note_content = nm.getNoteContent(note_name)
+        self.te_NoteContent.setText(note_content)
     
     def updateNote(self):
-        print("Note is updated ...")
+        note_name, path_note = self.getSelectedNote()
+        note_content = self.te_NoteContent.toPlainText()
+        nm.createNote(note_name, note_content)
     
     def retrieveAllNotes(self):
         self.lw_listNotes.clear()
         notes = nm.retrieveAllNotes()
         self.lw_listNotes.addItems(notes)
+    
+
+
 
 app = QtWidgets.QApplication([])
 note_creation = NoteCreation()
