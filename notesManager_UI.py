@@ -18,11 +18,19 @@ class NoteCreation(QtWidgets.QWidget, Ui_principalWindow):
 
 
     def createNote(self):
-        print("Note created ...")
+        noteName, ok = QtWidgets.QInputDialog.getText(self, 'Create a note', 'Give your note')
+        if not ok:
+            return
+        nm.createNote(noteName)
+        self.retrieveAllNotes()
     
     def deleteNote(self):
-        print("Note deleted ...")
-    
+        notes_selected = self.lw_listNotes.selectedItems()
+        if not notes_selected:
+            return
+        note_name = notes_selected[-1].text()
+        nm.deleteNote(note_name)
+        self.retrieveAllNotes()
     def showNote(self):
         print("Note visualized ...")
     
@@ -30,6 +38,7 @@ class NoteCreation(QtWidgets.QWidget, Ui_principalWindow):
         print("Note is updated ...")
     
     def retrieveAllNotes(self):
+        self.lw_listNotes.clear()
         notes = nm.retrieveAllNotes()
         self.lw_listNotes.addItems(notes)
 
